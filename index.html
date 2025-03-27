@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Слоты - Космическое Казино</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.7);
+            width: 450px;
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: scale(1.05);
+        }
+
+        .game-title {
+            color: #e94560;
+            text-shadow: 0 0 20px #e94560, 0 0 30px #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .slots {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .slot {
+            font-size: 60px;
+            letter-spacing: 15px;
+            margin: 0 10px;
+            display: inline-block;
+            transition: transform 1s ease;
+        }
+
+        button {
+            background: linear-gradient(45deg, #e94560, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+            font-size: 20px;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #ff6b6b, #e94560);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.7);
+        }
+
+        .result {
+            color: #4e54c8;
+            font-size: 24px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #4e54c8;
+        }
+
+        .balance {
+            font-size: 22px;
+            margin: 10px 0;
+            text-shadow: 0 0 10px #e94560;
+        }
+
+        .bet-input {
+            margin: 10px 0;
+        }
+
+        .bet-input input {
+            padding: 10px;
+            border: 2px solid #e94560;
+            border-radius: 5px;
+            background: #1a1a2e;
+            color: #e94560;
+            width: 100px;
+            font-size: 18px;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/black-paper.png');
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h2 class="game-title">🎰 Галактические Слоты</h2>
+        <div class="balance">Баланс: <span id="balanceAmount">5000</span> фишек</div>
+        <div class="bet-input">
+            <input type="number" id="betAmount" min="100" max="5000" placeholder="Ставка">
+        </div>
+        <div class="slots">
+            <div class="slot" id="slot1">🎮</div>
+            <div class="slot" id="slot2">🎲</div>
+            <div class="slot" id="slot3">💎</div>
+        </div>
+        <button onclick="playSlots()">Крутить!</button>
+        <div id="slotsResult" class="result"></div>
+    </div>
+
+    <script>
+        const symbols = ['🎮', '🎲', '💎', '💵', '🚀', '👾'];
+        let balance = 5000;
+
+        function playSlots() {
+            const betInput = document.getElementById('betAmount');
+            const bet = parseInt(betInput.value);
+
+            if (isNaN(bet) || bet < 100 || bet > 5000 || bet > balance) {
+                alert("Введите корректную ставку от 100 до 5000!");
+                return;
+            }
+
+            balance -= bet;
+            document.getElementById('balanceAmount').textContent = balance;
+
+            // Анимация вращения для всех слотов
+            const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+            slots.forEach(slot => {
+                slot.style.transition = 'transform 1s ease';
+                slot.style.transform = 'rotate(0deg)';
+            });
+
+            setTimeout(() => {
+                slots.forEach(slot => {
+                    slot.style.transform = 'rotate(360deg)';
+                });
+            }, 100); // Задержка перед началом вращения
+
+            // Генерация слотов
+            setTimeout(() => {
+                const results = slots.map(() => symbols[Math.floor(Math.random() * symbols.length)]);
+                slots.forEach((slot, index) => {
+                    slot.textContent = results[index];
+                });
+                const winChance = Math.random(); // Генерация шанса на выигрыш
+                if (winChance < 0.6 && results.every(s => s === results[0])) { // 60% шанс на выигрыш
+                    document.getElementById('slotsResult').textContent = 'ДЖЕКПОТ! 🎉';
+                    balance += bet * 30; // Увеличение баланса при выигрыше
+                } else {
+                    document.getElementById('slotsResult').textContent = 'Повезет в следующий раз!';
+                }
+                document.getElementById('balanceAmount').textContent = balance;
+            }, 2000); // Задержка для отображения результата
+        }
+    </script>
+</body>
+</html>
